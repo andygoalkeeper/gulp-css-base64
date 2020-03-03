@@ -146,12 +146,23 @@ function encodeResource(img, file, opts, doneCallback) {
       return;
     }
 
-    binRes = fs.readFileSync(location);
+    var getFileBuffer = function(location) {
+      binRes = fs.readFileSync(location);
 
-    fileRes.path = location;
-    fileRes.contents = binRes;
+      if (binRes.length) {
+        fileRes.path = location;
+        fileRes.contents = binRes;
 
-    doneCallback(fileRes);
+        doneCallback(fileRes);
+      } else {
+        setTimeout(function() {
+          getFileBuffer(location);
+        }, 100);
+      }
+    };
+
+    getFileBuffer(location);
+
     return;
   }
 }
